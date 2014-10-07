@@ -24,6 +24,7 @@ def e_finalize():
 
 ## Epiphany access
 def e_open(dev, row, col, rows,cols):
+	print "TODO: Not implemented!"
 	pass
 
 def e_close(dev):
@@ -31,16 +32,20 @@ def e_close(dev):
 
 ## External Memory Access
 def e_alloc(mbuf, base, size):
+	print "TODO: Not implemented!"
 	pass
 
 def e_free(mbuf):
+	print "TODO: Not implemented!"
 	pass
 
 ## Data Transfer
 def e_read(dev, row, col, from_addr, buf, size):
+	print "TODO: Not implemented!"
 	pass
 
 def e_write(dev, row, col, to_addr, buf, size):
+	print "TODO: Not implemented!"
 	pass
 
 '''
