@@ -23,12 +23,15 @@ case $(uname -p) in
 		;;
 esac
 
-# Build HOST side application
-${CROSS_PREFIX}gcc src/hello_world.c -o Debug/hello_world.elf -I ${EINCS} -L ${ELIBS} -le-hal #-le-loader
+rm -fr Debug
+mkdir Debug
 
 # Build DEVICE side program
 e-gcc -T ${ELDF} src/e_hello_world.c -o Debug/e_hello_world.elf -le-lib
 
 # Convert ebinary to SREC file
 e-objcopy --srec-forceS3 --output-target srec Debug/e_hello_world.elf Debug/e_hello_world.srec
+
+cp src/hello_world.py Debug/
+cp -Rv ../../pyepiphany Debug/
 

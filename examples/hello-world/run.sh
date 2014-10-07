@@ -8,5 +8,5 @@ EHDF=${EPIPHANY_HDF}
 
 cd Debug
 
-sudo -E LD_LIBRARY_PATH=${ELIBS} EPIPHANY_HDF=${EHDF} ./hello_world.elf
+sudo -E LD_LIBRARY_PATH=${ELIBS} EPIPHANY_HDF=${EHDF} python hello_world.py
 

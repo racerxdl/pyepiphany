@@ -43,7 +43,7 @@ int main(void) {
 	// in the internal memory, so we link against
 	// the FAST.LDF linker script, where these
 	// functions are placed in external memory.
-	sprintf(outbuf, "Hello World from core 0x%03x!", coreid);
+	sprintf(outbuf, "Python Hello World from core 0x%03x!", coreid);
 
 	return EXIT_SUCCESS;
 }

@@ -7,9 +7,9 @@ from ctypes import *
 '''
 
 #	e_bool_t enum
-E_FALSE 				= 	False
-E_TRUE 					= 	True 
-
+E_FALSE 				= 	0
+E_TRUE 					= 	1 
+NULL 					=	0
 
 #	e_hal_diag_t enum
 H_D0 					= 	0
