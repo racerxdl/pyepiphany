@@ -91,7 +91,7 @@ E_REG_R62              = E_CORE_GP_REG_BASE + 0x00f8
 E_REG_R63              = E_CORE_GP_REG_BASE + 0x00fc
 
 #	e_core_reg_id_t enum
-E_CORE_SP_REG_BASE     = 0xf0000,
+E_CORE_SP_REG_BASE     = 0xf0000
 # Control registers
 E_REG_CONFIG           = E_CORE_SP_REG_BASE + 0x0400
 E_REG_STATUS           = E_CORE_SP_REG_BASE + 0x0404
@@ -242,7 +242,7 @@ class e_mmap_t(Structure):
 						("page_base"	, 	c_int),
 						("page_offset"	,	c_int),
 						("map_size"		,	c_int),
-						("mapped_base"	,	c_void_p,
+						("mapped_base"	,	c_void_p),
 						("base"			,	c_void_p)
 					]	
 
