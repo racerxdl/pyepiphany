@@ -195,6 +195,14 @@ E_PARALLELLA6401 = 6
 
 SIZEOF_IVT = 0x28
 
+#	e_loader_diag_t enum
+L_D0 = 0
+L_D1 = 1
+L_D2 = 2
+L_D3 = 3
+L_D4 = 40
+
+
 class e_mem_t(Structure):
 	'''
 		e_objtype_t      objtype;     // object type identifier
