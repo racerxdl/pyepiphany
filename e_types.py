@@ -372,6 +372,7 @@ class e_platform_t(Structure):
 
 						("regs_base"	,	c_uint),
 
+						("num_chips"	,	c_int),
 						("chip"			,	POINTER(e_chip_t)),
 						("row"			,	c_uint),
 						("col"			,	c_uint),
