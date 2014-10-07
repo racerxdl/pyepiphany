@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 
 from ctypes import *
+from e_types import *
 
 _elib = CDLL("libe-hal.so")	#include <e-hal.h>
 
+#################################
+## Device communication functions
+##
+## Platform configuration
 def e_init(hdf=None):
 	if hdf == None:
 		buff = 0
@@ -11,26 +16,34 @@ def e_init(hdf=None):
 		buff = create_string_buffer(hdf) 
 	return True if _elib.e_init(buff) == 0 else False
 
+def e_get_platform_info(platform):
+	return _elib.e_get_platform_info(byref(platform)
+
+def e_finalize():
+	return _elib.e_finalize()
+
+## Epiphany access
+def e_open(dev, row, col, rows,cols):
+	pass
+
+def e_close(dev):
+	pass
+
+## External Memory Access
+def e_alloc(mbuf, base, size):
+	pass
+
+def e_free(mbuf):
+	pass
+
+## Data Transfer
+def e_read(dev, row, col, from_addr, buf, size):
+	pass
+
+def e_write(dev, row, col, to_addr, buf, size):
+	pass
+
 '''
-
-/////////////////////////////////
-// Device communication functions
-//
-// Platform configuration
-int     e_init(char *hdf);
-int     e_get_platform_info(e_platform_t *platform);
-int     e_finalize();
-// Epiphany access
-int     e_open(e_epiphany_t *dev, unsigned row, unsigned col, unsigned rows, unsigned cols);
-int     e_close(e_epiphany_t *dev);
-// External memory access
-int     e_alloc(e_mem_t *mbuf, off_t base, size_t size);
-int     e_free(e_mem_t *mbuf);
-//
-// Data transfer
-ssize_t e_read(void *dev, unsigned row, unsigned col, off_t from_addr, void *buf, size_t size);
-ssize_t e_write(void *dev, unsigned row, unsigned col, off_t to_addr, const void *buf, size_t size);
-
 
 ///////////////////////////
 // System control functions
