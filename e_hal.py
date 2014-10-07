@@ -17,7 +17,7 @@ def e_init(hdf=None):
 	return True if _elib.e_init(buff) == 0 else False
 
 def e_get_platform_info(platform):
-	return _elib.e_get_platform_info(byref(platform)
+	return _elib.e_get_platform_info(byref(platform))
 
 def e_finalize():
 	return _elib.e_finalize()
