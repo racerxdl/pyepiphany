@@ -7,21 +7,21 @@ from ctypes import *
 '''
 
 #	e_bool_t enum
-E_FALSE = False
-E_TRUE = True 
+E_FALSE 				= 	False
+E_TRUE 					= 	True 
 
 
 #	e_hal_diag_t enum
-H_D0 = 0
-H_D1 = 1
-H_D2 = 2
-H_D3 = 3
-H_D4 = 4
+H_D0 					= 	0
+H_D1 					= 	1
+H_D2 					= 	2
+H_D3 					= 	3
+H_D4 					= 	4
 
 #	e_return_stat_t enum
-E_OK   =  0
-E_ERR  = -1
-E_WARN = -2
+E_OK   					=  	0
+E_ERR  					= 	-1
+E_WARN 					= 	-2
 
 #	e_gp_reg_id_t enum
 E_CORE_GP_REG_BASE     = 0xf0000
@@ -159,38 +159,6 @@ E_SYS_FILTERL   = E_SYS_REG_BASE + 0x000c
 E_SYS_FILTERH   = E_SYS_REG_BASE + 0x0010
 E_SYS_FILTERC   = E_SYS_REG_BASE + 0x0014
 
-# Core group data structures
-
-class e_epiphany_t:
-	'''
-	e_objtype_t      objtype;     // object type identifier
-	e_chiptype_t     type;        // Epiphany chip part number
-	unsigned int     num_cores;   // number of cores group
-	unsigned int     base_coreid; // group base core ID
-	unsigned int     row;         // group absolute row number
-	unsigned int     col;         // group absolute col number
-	unsigned int     rows;        // number of rows group
-	unsigned int     cols;        // number of cols group
-	e_core_t       **core;        // e-cores data structures array
-	int              memfd;       // for mmap
-	'''
-	pass
-
-class e_mem_t:
-	'''
-	e_objtype_t      objtype;     // object type identifier
-	off_t            phy_base;    // physical global base address of external memory buffer as seen by host side
-	off_t            page_base;   // physical base address of memory page
-	off_t            page_offset; // offset of memory region base to memory page base
-	size_t           map_size;    // size of eDRAM allocated buffer for host side
-	off_t            ephy_base;   // physical global base address of external memory buffer as seen by device side
-	size_t           emap_size;   // size of eDRAM allocated buffer for device side
-	void            *mapped_base; // for mmap
-	void            *base;        // application (virtual) space base address of external memory buffer
-	int              memfd;       // for mmap
-	'''
-	pass
-
 #	e_signal_t enum
 E_SYNC     = 0
 E_USER_INT = 9
@@ -225,6 +193,34 @@ E_ZEDBOARD6401   = 4
 E_PARALLELLA1601 = 5
 E_PARALLELLA6401 = 6
 
+SIZEOF_IVT = 0x28
+
+class e_mem_t(Structure):
+	'''
+		e_objtype_t      objtype;     // object type identifier
+		off_t            phy_base;    // physical global base address of external memory buffer as seen by host side
+		off_t            page_base;   // physical base address of memory page
+		off_t            page_offset; // offset of memory region base to memory page base
+		size_t           map_size;    // size of eDRAM allocated buffer for host side
+		off_t            ephy_base;   // physical global base address of external memory buffer as seen by device side
+		size_t           emap_size;   // size of eDRAM allocated buffer for device side
+		void            *mapped_base; // for mmap
+		void            *base;        // application (virtual) space base address of external memory buffer
+		int              memfd;       // for mmap
+	'''
+	_fields_ 	= 	[	("objtype"		, 	c_int),
+						("phy_base"		, 	c_int),
+						("page_base"	, 	c_int),
+						("page_offset"	,	c_int),
+						("map_size"		,	c_int),
+						("ephy_base"	,	c_int),
+						("emap_size"	,	c_int),
+						("mapped_base"	,	c_void_p),
+						("base"			,	c_void_p),
+						("memfd"		,	c_int)
+					]	
+
+
 class e_mmap_t(Structure):
 	'''
 	typedef struct {
@@ -247,13 +243,6 @@ class e_mmap_t(Structure):
 					]	
 
 class e_core_t(Structure):
-	_fields_ 	= 	[	("objtype"		, 	c_int),
-						("id"			, 	c_uint),
-						("row"			, 	c_uint),
-						("col"			,	c_uint),
-						("mems"			,	e_mmap_t),
-						("regs"			,	e_mmap_t)
-					]
 	'''
 	typedef struct {
 		e_objtype_t      objtype;     // object type identifier
@@ -264,9 +253,61 @@ class e_core_t(Structure):
 		e_mmap_t         regs;        // core's e-regs data structure
 	} e_core_t;
 	'''
+	_fields_ 	= 	[	("objtype"		, 	c_int),
+						("id"			, 	c_uint),
+						("row"			, 	c_uint),
+						("col"			,	c_uint),
+						("mems"			,	e_mmap_t),
+						("regs"			,	e_mmap_t)
+					]
+
+class e_epiphany_t(Structure):
+	'''
+		e_objtype_t      objtype;     // object type identifier
+		e_chiptype_t     type;        // Epiphany chip part number
+		unsigned int     num_cores;   // number of cores group
+		unsigned int     base_coreid; // group base core ID
+		unsigned int     row;         // group absolute row number
+		unsigned int     col;         // group absolute col number
+		unsigned int     rows;        // number of rows group
+		unsigned int     cols;        // number of cols group
+		e_core_t       **core;        // e-cores data structures array
+		int              memfd;       // for mmap
+	'''
+	_fields_ 	= 	[	("objtype"		, 	c_int),
+						("type"			, 	c_int),
+						("num_cores"	, 	c_uint),
+						("base_coreid"	, 	c_uint),
+						("row"			, 	c_uint),
+						("col"			, 	c_uint),
+						("rows"			, 	c_uint),
+						("cols"			, 	c_uint),
+						("core"			,	POINTER(POINTER(e_core_t))),
+						("memfd"		,	c_int)
+					]
 
 # Platform data structures
 class e_chip_t(Structure):
+	'''
+		e_objtype_t      objtype;     // object type identifier
+		e_chiptype_t     type;        // Epiphany chip part number
+		char             version[32]; // version number of Epiphany chip
+		unsigned int     arch;        // architecture generation
+		unsigned int     base_coreid; // chip base core ID
+		unsigned int     row;         // chip absolute row number
+		unsigned int     col;         // chip absolute col number
+		unsigned int     rows;        // number of rows in chip
+		unsigned int     cols;        // number of cols in chip
+		unsigned int     num_cores;   // number of cores in chip
+		unsigned int     sram_base;   // base offset of core SRAM
+		unsigned int     sram_size;   // size of core SRAM
+		unsigned int     regs_base;   // base offset of core registers
+		unsigned int     regs_size;   // size of core registers segment
+		off_t            ioregs_n;    // base address of north IO register
+		off_t            ioregs_e;    // base address of east IO register
+		off_t            ioregs_s;    // base address of south IO register
+		off_t            ioregs_w;    // base address of west IO register
+	'''
 	_fields_ 	= 	[	("objtype"		, 	c_int),
 						("type"			, 	c_int),
 						("version"		, 	c_char * 32),
@@ -286,49 +327,43 @@ class e_chip_t(Structure):
 						("ioregs_s"		,	c_int),
 						("ioregs_w"		,	c_int)
 					]
-	'''
-	typedef struct {
-		e_objtype_t      objtype;     // object type identifier
-		e_chiptype_t     type;        // Epiphany chip part number
-		char             version[32]; // version number of Epiphany chip
-		unsigned int     arch;        // architecture generation
-		unsigned int     base_coreid; // chip base core ID
-		unsigned int     row;         // chip absolute row number
-		unsigned int     col;         // chip absolute col number
-		unsigned int     rows;        // number of rows in chip
-		unsigned int     cols;        // number of cols in chip
-		unsigned int     num_cores;   // number of cores in chip
-		unsigned int     sram_base;   // base offset of core SRAM
-		unsigned int     sram_size;   // size of core SRAM
-		unsigned int     regs_base;   // base offset of core registers
-		unsigned int     regs_size;   // size of core registers segment
-		off_t            ioregs_n;    // base address of north IO register
-		off_t            ioregs_e;    // base address of east IO register
-		off_t            ioregs_s;    // base address of south IO register
-		off_t            ioregs_w;    // base address of west IO register
-	} e_chip_t;
-	'''
 
 
 class e_memseg_t(Structure):
+	'''
+	e_objtype_t      objtype;     // object type identifier
+	off_t            phy_base;    // physical global base address of external memory segment as seen by host side
+	off_t            ephy_base;   // physical global base address of external memory segment as seen by device side
+	size_t           size;        // size of eDRAM allocated buffer for host side
+	e_memtype_t      type;        // type of memory RD/WR/RW
+	'''
 	_fields_ 	= 	[	("objtype"		, 	c_int),
 						("phy_base"		, 	c_int),
 						("ephy_base"	,	c_int),
 						("size"			,	c_int),
 						("type"			,	c_int)
 					]
-	'''
-	typedef struct {
-		e_objtype_t      objtype;     // object type identifier
-		off_t            phy_base;    // physical global base address of external memory segment as seen by host side
-		off_t            ephy_base;   // physical global base address of external memory segment as seen by device side
-		size_t           size;        // size of eDRAM allocated buffer for host side
-		e_memtype_t      type;        // type of memory RD/WR/RW
-	} e_memseg_t;
-	'''
-	pass
 
 class e_platform_t(Structure):
+	'''
+	e_objtype_t      objtype;     // object type identifier
+	e_platformtype_t type;        // platform part number
+	char             version[32]; // version number of platform
+	unsigned int     hal_ver;     // version number of the E-HAL
+	int              initialized; // platform initialized?
+
+	unsigned int     regs_base;   // base address of platform registers
+
+	int              num_chips;   // number of Epiphany chips in platform
+	e_chip_t        *chip;        // array of Epiphany chip objects
+	unsigned int     row;         // platform absolute minimum row number
+	unsigned int     col;         // platform absolute minimum col number
+	unsigned int     rows;        // number of rows in platform
+	unsigned int     cols;        // number of cols in platform
+
+	int              num_emems;   // number of external memory segments in platform
+	e_memseg_t      *emem;        // array of external memory segments
+	'''
 	_fields_ 	= 	[	("objtype"		, 	c_int),
 						("type"			, 	c_int),
 						("version"		,	c_char * 32),
@@ -346,34 +381,20 @@ class e_platform_t(Structure):
 						("num_emems"	,	c_int),
 						("emem"			,	POINTER(e_memseg_t))
 					]	
-	'''
-	typedef struct {
-		e_objtype_t      objtype;     // object type identifier
-		e_platformtype_t type;        // platform part number
-		char             version[32]; // version number of platform
-		unsigned int     hal_ver;     // version number of the E-HAL
-		int              initialized; // platform initialized?
-
-		unsigned int     regs_base;   // base address of platform registers
-
-		int              num_chips;   // number of Epiphany chips in platform
-		e_chip_t        *chip;        // array of Epiphany chip objects
-		unsigned int     row;         // platform absolute minimum row number
-		unsigned int     col;         // platform absolute minimum col number
-		unsigned int     rows;        // number of rows in platform
-		unsigned int     cols;        // number of cols in platform
-
-		int              num_emems;   // number of external memory segments in platform
-		e_memseg_t      *emem;        // array of external memory segments
-	} e_platform_t;
-	'''
-
-
-
-# Definitions for device workgroup communication object
-SIZEOF_IVT = 0x28
 
 class e_group_config_t(Structure):
+	'''
+	e_objtype_t  objtype;           // 0x28
+	e_chiptype_t chiptype;          // 0x2c
+	e_coreid_t   group_id;          // 0x30
+	unsigned     group_row;         // 0x34
+	unsigned     group_col;         // 0x38
+	unsigned     group_rows;        // 0x3c
+	unsigned     group_cols;        // 0x40
+	unsigned     core_row;          // 0x44
+	unsigned     core_col;          // 0x48
+	unsigned     alignment_padding; // 0x4c
+	'''
 	_fields_ 	= 	[	("objtype"				, 	c_int),
 						("chiptype"				, 	c_int),
 						("group_id"				,	c_uint),
@@ -385,28 +406,12 @@ class e_group_config_t(Structure):
 						("core_col"				,	c_uint),
 						("alignment_padding"	,	c_uint),
 					]	
-	'''
-	typedef struct {
-		e_objtype_t  objtype;           // 0x28
-		e_chiptype_t chiptype;          // 0x2c
-		e_coreid_t   group_id;          // 0x30
-		unsigned     group_row;         // 0x34
-		unsigned     group_col;         // 0x38
-		unsigned     group_rows;        // 0x3c
-		unsigned     group_cols;        // 0x40
-		unsigned     core_row;          // 0x44
-		unsigned     core_col;          // 0x48
-		unsigned     alignment_padding; // 0x4c
-	} e_group_config_t;
-	'''
 
 class e_mem_config_t(Structure):
+	'''
+	e_objtype_t objtype;            // 0x50
+	unsigned    base;               // 0x54
+	'''
 	_fields_	=	[	("objtype"	,	c_int),
 						("base"		,	c_uint)
 					]
-	'''
-	typedef struct {
-		e_objtype_t objtype;            // 0x50
-		unsigned    base;               // 0x54
-	} e_emem_config_t;
-	'''
