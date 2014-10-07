@@ -225,7 +225,7 @@ E_ZEDBOARD6401   = 4
 E_PARALLELLA1601 = 5
 E_PARALLELLA6401 = 6
 
-class e_mmap_t:
+class e_mmap_t(Structure):
 	'''
 	typedef struct {
 		e_objtype_t      objtype;     // object type identifier
@@ -237,9 +237,23 @@ class e_mmap_t:
 		void            *base;        // application space base address of memory region
 	} e_mmap_t;
 	'''
-	pass
+	_fields_ 	= 	[	("objtype"		, 	c_int),
+						("phy_base"		, 	c_int),
+						("page_base"	, 	c_int),
+						("page_offset"	,	c_int),
+						("map_size"		,	c_int),
+						("mapped_base"	,	c_void_p,
+						("base"			,	c_void_p)
+					]	
 
-class e_core_t:
+class e_core_t(Structure):
+	_fields_ 	= 	[	("objtype"		, 	c_int),
+						("id"			, 	c_uint),
+						("row"			, 	c_uint),
+						("col"			,	c_uint),
+						("mems"			,	e_mmap_t),
+						("regs"			,	e_mmap_t)
+					]
 	'''
 	typedef struct {
 		e_objtype_t      objtype;     // object type identifier
@@ -250,10 +264,28 @@ class e_core_t:
 		e_mmap_t         regs;        // core's e-regs data structure
 	} e_core_t;
 	'''
-	pass
 
 # Platform data structures
-class e_chip_t:
+class e_chip_t(Structure):
+	_fields_ 	= 	[	("objtype"		, 	c_int),
+						("type"			, 	c_int),
+						("version"		, 	c_char * 32),
+						("arch"			,	c_uint),
+						("base_coreid"	,	c_uint),
+						("row"			,	c_uint),
+						("col"			,	c_uint),
+						("rows"			,	c_uint),
+						("cols"			,	c_uint),
+						("num_cores"	,	c_uint),
+						("sram_base"	,	c_uint),
+						("sram_size"	,	c_uint),
+						("regs_base"	,	c_uint),
+						("regs_size"	,	c_uint),
+						("ioregs_n"		,	c_int),
+						("ioregs_e"		,	c_int),
+						("ioregs_s"		,	c_int),
+						("ioregs_w"		,	c_int)
+					]
 	'''
 	typedef struct {
 		e_objtype_t      objtype;     // object type identifier
@@ -276,9 +308,15 @@ class e_chip_t:
 		off_t            ioregs_w;    // base address of west IO register
 	} e_chip_t;
 	'''
-	pass
 
-class e_memseg_t:
+
+class e_memseg_t(Structure):
+	_fields_ 	= 	[	("objtype"		, 	c_int),
+						("phy_base"		, 	c_int),
+						("ephy_base"	,	c_int),
+						("size"			,	c_int),
+						("type"			,	c_int)
+					]
 	'''
 	typedef struct {
 		e_objtype_t      objtype;     // object type identifier
@@ -290,7 +328,24 @@ class e_memseg_t:
 	'''
 	pass
 
-class e_platform_t:
+class e_platform_t(Structure):
+	_fields_ 	= 	[	("objtype"		, 	c_int),
+						("type"			, 	c_int),
+						("version"		,	c_char * 32),
+						("hal_ver"		,	c_uint),
+						("initialized"	,	c_int),
+
+						("regs_base"	,	c_uint),
+
+						("chip"			,	POINTER(e_chip_t)),
+						("row"			,	c_uint),
+						("col"			,	c_uint),
+						("rows"			,	c_uint),
+						("cols"			,	c_uint),
+
+						("num_emems"	,	c_int),
+						("emem"			,	POINTER(e_memseg_t))
+					]	
 	'''
 	typedef struct {
 		e_objtype_t      objtype;     // object type identifier
@@ -312,14 +367,24 @@ class e_platform_t:
 		e_memseg_t      *emem;        // array of external memory segments
 	} e_platform_t;
 	'''
-	pass
 
 
 
 # Definitions for device workgroup communication object
 SIZEOF_IVT = 0x28
 
-class e_group_config_t:
+class e_group_config_t(Structure):
+	_fields_ 	= 	[	("objtype"				, 	c_int),
+						("chiptype"				, 	c_int),
+						("group_id"				,	c_uint),
+						("group_row"			,	c_uint),
+						("group_col"			,	c_uint),
+						("group_rows"			,	c_uint),
+						("group_cols"			,	c_uint),
+						("core_row"				,	c_uint),
+						("core_col"				,	c_uint),
+						("alignment_padding"	,	c_uint),
+					]	
 	'''
 	typedef struct {
 		e_objtype_t  objtype;           // 0x28
@@ -334,13 +399,14 @@ class e_group_config_t:
 		unsigned     alignment_padding; // 0x4c
 	} e_group_config_t;
 	'''
-	pass
 
-class e_mem_config_t:
+class e_mem_config_t(Structure):
+	_fields_	=	[	("objtype"	,	c_int),
+						("base"		,	c_uint)
+					]
 	'''
 	typedef struct {
 		e_objtype_t objtype;            // 0x50
 		unsigned    base;               // 0x54
 	} e_emem_config_t;
 	'''
-	pass
